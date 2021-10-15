@@ -19,6 +19,11 @@ namespace LetsTest.Domain
 
         public FluentCalculator Minus(double value)
         {
+            if (value < 0)
+            {
+                throw new ArgumentException("negative numbers not allowed", nameof(value));
+            }
+
             Result -= value;
             return this;
         }

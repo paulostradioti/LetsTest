@@ -46,5 +46,21 @@ namespace LetsTest.Tests
 
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void Minus_NegativeValue_ThrowsException()
+        {
+            //Arrange
+            var expectedMessage = "NEGATIVE NUMBERS";
+            var calc = new FluentCalculator();
+            Func<double, FluentCalculator> action = calc.Minus;
+
+            //Act && Assert
+            var actual = Assert.Throws<ArgumentException>(() => action(-1));
+
+
+            //Assert
+            Assert.Contains(expectedMessage, actual.Message, StringComparison.InvariantCultureIgnoreCase);
+        }
     }
 }
