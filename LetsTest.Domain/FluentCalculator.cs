@@ -1,19 +1,35 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LetsTest.Domain
 {
     public class FluentCalculator
     {
-        public double Result { get; private set; }
+        
+        private readonly IInputParser _parser;
 
-        public FluentCalculator()
+        public FluentCalculator(IInputParser parser)
         {
+
+            _parser = parser;
             Result = 0;
         }
 
+        public double Result { get; private set; }
+
+     
         public FluentCalculator Plus(double value)
         {
             Result += value;
+            return this;
+        }
+
+        public FluentCalculator Plus(string input)
+        {
+            var inputNumbers = _parser.Parse(input);
+            Result += inputNumbers.Sum();
+
             return this;
         }
 
@@ -48,6 +64,12 @@ namespace LetsTest.Domain
         public FluentCalculator Sqrt()
         {
             Result = Math.Sqrt(Result);
+            return this;
+        }
+
+        public FluentCalculator Reset()
+        {
+            Result = 0;
             return this;
         }
     }

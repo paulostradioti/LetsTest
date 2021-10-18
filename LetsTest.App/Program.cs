@@ -1,30 +1,29 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using LetsTest.Domain;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace LetsTest.App
 {
     public class Program
     {
-        static void Main(string[] args)
+        private static readonly CancellationTokenSource tokenSource = new();
+        static Task Main(string[] args)
         {
-            var calc = new FluentCalculator();
+            var hostBuilder = Host.CreateDefaultBuilder(args);
+            hostBuilder.ConfigureServices((_, services) =>
+            {
+                services.AddTransient<IInputParser, InputParser>();
+                services.AddTransient<FluentCalculator>();
+                services.AddHostedService<Startup>();
+                services.AddSingleton(tokenSource);
+            });
 
-            var result = calc.Plus(1).Plus(3).Plus(-1).Result;
-            Console.WriteLine($"Resultado Esperado (3): {result}");
+            using var host = hostBuilder.Build();
 
-            calc = new FluentCalculator();
-            result = calc.Plus(1).DivideBy(1).MultiplyBy(7).Result;
-            Console.WriteLine($"Resultado Esperado (7): {result}");
-
-            calc = new FluentCalculator();
-            result = calc.Plus(3).Pow(2).Result;
-            Console.WriteLine($"Resultado Esperado (9): {result}");
-
-            calc = new FluentCalculator();
-            result = calc.Plus(64).Sqrt().Result;
-            Console.WriteLine($"Resultado Esperado (8): {result}");
-
-            Console.ReadKey();
+            return host.RunAsync(tokenSource.Token);
         }
     }
 }
