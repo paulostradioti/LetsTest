@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LetsTest.Domain
@@ -7,7 +8,9 @@ namespace LetsTest.Domain
     {
         public IEnumerable<double> Parse(string input)
         {
-            return Enumerable.Empty<double>();
+            var numbers = input.Split(";", StringSplitOptions.RemoveEmptyEntries);
+
+            return (numbers.Length > 0) ? numbers.Select(double.Parse) : Enumerable.Empty<double>();
         }
     }
 }
